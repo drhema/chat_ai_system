@@ -62,5 +62,3 @@ networks:
     external: true
     name: mi_red
 
-
-dsfs
