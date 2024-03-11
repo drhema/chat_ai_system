@@ -8,6 +8,8 @@ wget https://raw.githubusercontent.com/drhema/chat_ai_system/main/portainer.sh&&
 2- nginx, php, redis cache
 wget https://raw.githubusercontent.com/drhema/chat_ai_system/main/nginx-php-redis.sh&& chmod +x nginx-php-redis.sh && ./nginx-php-redis.sh
 
+Note redis cache is against redis memory as they run on same port
+
 for mongodb 
 docker network create mi_red
 docker volume create mongodb_data
