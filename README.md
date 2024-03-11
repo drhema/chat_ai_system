@@ -5,6 +5,9 @@
 wget https://raw.githubusercontent.com/drhema/chat_ai_system/main/portainer.sh&& chmod +x portainer.sh && ./portainer.sh
 
 
+2- nginx, php, redis cache
+wget https://raw.githubusercontent.com/drhema/chat_ai_system/main/nginx-php-redis.sh&& chmod +x nginx-php-redis.sh && ./nginx-php-redis.sh
+
 for mongodb 
 docker network create mi_red
 docker volume create mongodb_data
