@@ -8,7 +8,7 @@ echo "deb http://download.webmin.com/download/repository sarge contrib" | sudo t
 
 # Import the Webmin GPG key
 wget -qO - http://www.webmin.com/jcameron-key.asc | sudo apt-key add -
-
+sudo ufw allow 10000/tcp
 # Update the package lists
 sudo apt update
 
