@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Install Nginx
-sudo apt update
+sudo apt upate
 sudo apt install nginx -y
 # Optionally check the status of Nginx
 # sudo systemctl status nginx
