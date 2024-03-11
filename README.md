@@ -1,5 +1,4 @@
 
-```markdown
 # Chat AI System
 
 This repository contains scripts and configurations to set up a Chat AI system with Portainer, Webmin, Nginx, PHP, Redis Cache for WordPress, and MongoDB. Follow the instructions below to get started.
