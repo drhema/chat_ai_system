@@ -10,16 +10,17 @@ sudo apt install nginx -y
 sleep 2
 
 # Configure Nginx with Gzip Compression and FastCGI Cache Settings
-sudo sed -i '/http {/a \
-    gzip on;\n\
-    gzip_vary on;\n\
-    gzip_proxied any;\n\
-    gzip_comp_level 6;\n\
-    gzip_buffers 16 8k;\n\
-    gzip_http_version 1.1;\n\
-    gzip_types text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss text/javascript;\n\
-    fastcgi_cache_path /etc/nginx/cache levels=1:2 keys_zone=MYCACHE:100m inactive=60m;\n\
-    fastcgi_cache_key "$scheme$request_method$host$request_uri";' /etc/nginx/nginx.conf
+# Uncomment default gzip settings in Nginx configuration
+sudo sed -i 's/# gzip_vary on;/gzip_vary on;/' /etc/nginx/nginx.conf
+sudo sed -i 's/# gzip_proxied any;/gzip_proxied any;/' /etc/nginx/nginx.conf
+sudo sed -i 's/# gzip_comp_level 6;/gzip_comp_level 6;/' /etc/nginx/nginx.conf
+sudo sed -i 's/# gzip_buffers 16 8k;/gzip_buffers 16 8k;/' /etc/nginx/nginx.conf
+sudo sed -i 's/# gzip_http_version 1.1;/gzip_http_version 1.1;/' /etc/nginx/nginx.conf
+sudo sed -i 's/# gzip_types text\/plain text\/css application\/json application\/javascript text\/xml application\/xml application\/xml\+rss text\/javascript;/gzip_types text\/plain text\/css application\/json application\/javascript text\/xml application\/xml application\/xml\+rss text\/javascript;/' /etc/nginx/nginx.conf
+
+# Append FastCGI cache settings to nginx.conf
+echo 'fastcgi_cache_path /etc/nginx/cache levels=1:2 keys_zone=MYCACHE:100m inactive=60m;' | sudo tee -a /etc/nginx/nginx.conf
+echo 'fastcgi_cache_key "$scheme$request_method$host$request_uri";' | sudo tee -a /etc/nginx/nginx.conf
 
 # Test Nginx configuration and reload
 sudo nginx -t
@@ -41,9 +42,22 @@ sudo systemctl start php8.2-fpm
 # Wait for 3 seconds
 sleep 3
 
-# Adjust PHP.ini settings
-PHP_INI=$(php --ini | grep "Loaded Configuration File" | sed -e "s|.*:\s*||")
-sudo sed -i -e 's/;opcache.enable=1/opcache.enable=1/' -e 's/;opcache.memory_consumption=128/opcache.memory_consumption=128/' -e 's/;opcache.interned_strings_buffer=8/opcache.interned_strings_buffer=8/' -e 's/;opcache.max_accelerated_files=10000/opcache.max_accelerated_files=10000/' -e 's/;opcache.revalidate_freq=2/opcache.revalidate_freq=2/' -e 's/;opcache.validate_timestamps=1/opcache.validate_timestamps=1/' -e 's/;session.cookie_httponly =/session.cookie_httponly = 1/' -e 's/;session.cookie_secure =/session.cookie_secure = 1/' -e 's/;max_execution_time = 30/max_execution_time = 120/' -e 's/;upload_max_filesize = 2M/upload_max_filesize = 64M/' -e 's/;post_max_size = 8M/post_max_size = 64M/' -e 's/;memory_limit = 128M/memory_limit = 256M/' "$PHP_INI"
+# Define the PHP.ini path directly
+PHP_INI="/etc/php/8.2/fpm/php.ini"
+
+# Adjust PHP.ini settings explicitly
+sudo sed -i 's/;opcache.enable=1/opcache.enable=1/' $PHP_INI
+sudo sed -i 's/;opcache.memory_consumption=128/opcache.memory_consumption=128/' $PHP_INI
+sudo sed -i 's/;opcache.interned_strings_buffer=8/opcache.interned_strings_buffer=8/' $PHP_INI
+sudo sed -i 's/;opcache.max_accelerated_files=10000/opcache.max_accelerated_files=10000/' $PHP_INI
+sudo sed -i 's/;opcache.revalidate_freq=2/opcache.revalidate_freq=2/' $PHP_INI
+sudo sed -i 's/;opcache.validate_timestamps=1/opcache.validate_timestamps=1/' $PHP_INI
+sudo sed -i 's/;session.cookie_httponly =/session.cookie_httponly = 1/' $PHP_INI
+sudo sed -i 's/;session.cookie_secure =/session.cookie_secure = 1/' $PHP_INI
+sudo sed -i 's/;max_execution_time = 30/max_execution_time = 120/' $PHP_INI
+sudo sed -i 's/;upload_max_filesize = 2M/upload_max_filesize = 64M/' $PHP_INI
+sudo sed -i 's/;post_max_size = 8M/post_max_size = 64M/' $PHP_INI
+sudo sed -i 's/;memory_limit = 128M/memory_limit = 256M/' $PHP_INI
 
 # Install Redis
 sudo apt install redis-server -y
