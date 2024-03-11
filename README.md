@@ -1,15 +1,9 @@
 # chat_ai_system
 
-1- install Portainer
+1- install Portainer & webmin
 
+wget https://raw.githubusercontent.com/drhema/chat_ai_system/main/portainer.sh&& chmod +x portainer.sh && ./portainer.sh
 
-sudo apt update
- 
-sudo apt install docker.io
- 
-docker volume create portainer_data
- 
-docker run -d -p 8000:8000 -p 9443:9443 --name portainer --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer-ce:latest
 
 for mongodb 
 docker network create mi_red
