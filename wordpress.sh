@@ -100,8 +100,6 @@ sudo systemctl reload nginx
 # Wait for 3 seconds before starting WordPress installation
 sleep 3
 
-# Continue from the previous parts of the script...
-
 # Download and install WordPress
 cd /var/www/$domain
 sudo wget https://wordpress.org/latest.tar.gz
@@ -129,6 +127,29 @@ if [ ! -z "$SALTS" ]; then
     done < salts.txt
     rm salts.txt # Remove temporary file
 fi
+
+# Install and configure Brotli for NGINX Plus
+sudo apt-get update
+sudo apt-get install -y nginx-plus-module-brotli
+
+# Ensure NGINX is configured to dynamically load the Brotli modules and enable Brotli compression
+# This part assumes you are appending to the existing NGINX configuration.
+BROTLI_CONFIG="
+load_module modules/ngx_http_brotli_filter_module.so;
+load_module modules/ngx_http_brotli_static_module.so;
+
+http {
+    brotli on;
+    brotli_static on;
+    brotli_types text/plain text/css application/javascript application/json image/x-icon image/svg+xml;
+}
+"
+echo "$BROTLI_CONFIG" | sudo tee -a /etc/nginx/nginx.conf
+
+# Test NGINX configuration and reload to apply Brotli
+sudo nginx -t && sudo nginx -s reload
+
+echo "Brotli has been installed and configured for NGINX Plus."
 
 # Wait for 1 second before restarting Nginx
 sleep 1
