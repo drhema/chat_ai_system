@@ -32,7 +32,7 @@ sleep 2
 # Install PHP 8.2
 sudo apt install software-properties-common -y
 sudo add-apt-repository ppa:ondrej/php -y
-sudo apt-get install libhtml-parser-perl
+sudo apt-get install libhtml-parser-perl -y
 sudo apt update
 sudo apt install php8.2-cli php8.2 php8.2-fpm php8.2-mysql php8.2-xml php8.2-gd php8.2-curl php8.2-mbstring php8.2-redis -y
 # Display PHP version (optional)
