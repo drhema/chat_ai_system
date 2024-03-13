@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# Switch to superuser mode
-sudo -i
-
 # Prompt the user for MySQL credentials
 read -p "Enter MySQL database name: " mysql_db
 read -p "Enter MySQL username: " mysql_user
