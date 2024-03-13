@@ -129,8 +129,11 @@ if [ ! -z "$SALTS" ]; then
 fi
 
 # Install and configure Brotli for NGINX Plus
-sudo apt-get update
-sudo apt-get install -y nginx-plus-module-brotli
+sudo add-apt-repository ppa:hda-me/nginx-stable -y
+sudo apt-get update -y
+# Install NGINX with Brotli
+sudo apt-get install nginx-brotli -y
+
 
 # Ensure NGINX is configured to dynamically load the Brotli modules and enable Brotli compression
 # This part assumes you are appending to the existing NGINX configuration.
