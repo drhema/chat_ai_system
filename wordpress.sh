@@ -25,7 +25,7 @@ server {
     index index.php index.html index.htm;
 
     # Caching for Static Assets
-    location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg)$ {
+    location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|webp|avif)$ {
         expires 30d;
         add_header Cache-Control "public, no-transform";
     }
