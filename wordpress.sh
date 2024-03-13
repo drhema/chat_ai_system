@@ -74,11 +74,33 @@ fi
 # Obtain SSL certificate
 sudo certbot --nginx -d $domain --non-interactive --agree-tos -m $email_address --redirect
 
+# Append SSL configuration to the Nginx virtual host file
+sudo tee -a $VHOST_FILE <<EOF
+
+server {
+    listen 443 ssl http2;
+    server_name $domain www.$domain;
+
+    ssl_certificate /etc/letsencrypt/live/$domain/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/$domain/privkey.pem;
+
+    # Rest of the SSL configuration remains the same as the first server block
+}
+EOF
+
 # Setup automatic renewal
 echo "0 0,12 * * * root certbot renew --quiet" | sudo tee -a /etc/crontab > /dev/null
 
+# Test Nginx configuration for errors
+sudo nginx -t
+
+# Reload Nginx to apply SSL configuration changes
+sudo systemctl reload nginx
+
 # Wait for 3 seconds before starting WordPress installation
 sleep 3
+
+# Continue from the previous parts of the script...
 
 # Download and install WordPress
 cd /var/www/$domain
@@ -93,6 +115,20 @@ sudo cp wp-config-sample.php wp-config.php
 sudo sed -i "s/database_name_here/$mysql_db/g" wp-config.php
 sudo sed -i "s/username_here/$mysql_user/g" wp-config.php
 sudo sed -i "s/password_here/$mysql_pass/g" wp-config.php
+
+# Fetch unique salts from the WordPress API and update wp-config.php
+SALTS=$(wget -qO- https://api.wordpress.org/secret-key/1.1/salt/)
+if [ ! -z "$SALTS" ]; then
+    sudo cp wp-config.php wp-config-backup.php # Backup the current wp-config.php file
+    echo "$SALTS" > salts.txt
+    # Replace the placeholder salts with the fetched ones
+    while IFS= read -r line; do
+        # Escape forward slashes, ampersands, and double quotes for use in sed
+        line=$(echo "$line" | sed -e 's/[\/&"]/\\&/g')
+        sudo sed -i "/put your unique phrase here/c\\$line" wp-config.php
+    done < salts.txt
+    rm salts.txt # Remove temporary file
+fi
 
 # Wait for 1 second before restarting Nginx
 sleep 1
